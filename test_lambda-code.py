@@ -1,5 +1,5 @@
 import json
-import boto3
+# import boto3
 from string import punctuation
 from datetime import datetime
 import geojson
