@@ -90,8 +90,12 @@ def lambda_handler(event, context):
                 'body': '400: gsend is required in feature properties'}
             raise Exception('AttributeError: gsend is required in field properties')
 
-
-    s3.put_object(Body=geojson.dumps(data), Bucket='presia-poc-2024-11-24', Key=f'{file_name}.geojson')
+    try:
+        s3.put_object(Body=geojson.dumps(data), Bucket='presia-poc-2024-11-24', Key=f'{file_name}.geojson')
+    except:
+        return {'statusCode': 500,
+        'body': f"Data Failed to send to S3 Bucket. Check API token parameters."
+    }
 
     return {
         'statusCode': 200,
