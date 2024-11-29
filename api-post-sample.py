@@ -14,4 +14,4 @@ with open('good_fields_nopoints.geojson', 'r') as file: # replace the geojson fi
 r = requests.post('https://vw4mpw6lx8.execute-api.us-east-2.amazonaws.com/develop', headers=headers, json=data)
 
 print(r)
-print(r)
+print(r.content)
