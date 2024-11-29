@@ -51,6 +51,23 @@ def test_nameless_data():
                 raise Exception('AttributeError: file name required in crs/properties/')
 
 
+def test_punctuation_name():
+    """This data has a name, 
+    but the name is all punctuation, 
+    and so it is effectively no name"""     
+    
+    with open('bad_fields_nopoints_name_all_punct.geojson', 'r') as all_punct_file:
+            all_punct_data = geojson.load(all_punct_file)
+            all_punct_name = all_punct_data['crs']['properties']['name']
+            all_punct_name = all_punct_name.translate(str.maketrans('', '', punctuation)) 
+
+    with pytest.raises(Exception):
+        if len(all_punct_name) == 0:
+            raise Exception("400: crs/properties/name has an invalid name. Please use alphanumeric characters")
+
+
+
+
 def test_missing_crs_property():
     """This data had a missing property in the crs field."""
     with open('bad_fields_nopoints_null_crs.geojson', 'r') as null_crs_file:

@@ -24,8 +24,13 @@ def lambda_handler(event, context):
         return {'statusCode': 400, 
         'body': '400: No name found for file. Please add one to crs/properties/name'}
         
+
     # Stripping punctuation/special characters
     file_name = file_name.translate(str.maketrans('', '', punctuation))
+
+    if len(file_name) == 0:
+        return {'statusCode': 400, 
+                'body': '400: crs/properties/name has an invalid name. Please use alphanumeric characters'}
 
 
     # Validating Geojson (as a redundancy measure)
@@ -33,6 +38,7 @@ def lambda_handler(event, context):
     if validity is False:
         return {'statusCode': 400, 
         'body': '400: Input is not a valid geojson'}
+
 
     # Validating no nan values
         # All properties must have non-empty values, but other values could hypothetically be null
