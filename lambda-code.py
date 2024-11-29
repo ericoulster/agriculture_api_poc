@@ -23,7 +23,6 @@ def lambda_handler(event, context):
     except:
         return {'statusCode': 400, 
         'body': '400: No name found for file. Please add one to crs/properties/name'}
-        raise Exception('AttributeError: file name required in crs/properties/')
         
     # Stripping punctuation/special characters
     file_name = file_name.translate(str.maketrans('', '', punctuation))
@@ -34,7 +33,6 @@ def lambda_handler(event, context):
     if validity is False:
         return {'statusCode': 400, 
         'body': '400: Input is not a valid geojson'}
-        raise ValueError('Input is not a valid geojson')
 
     # Validating no nan values
         # All properties must have non-empty values, but other values could hypothetically be null
@@ -42,7 +40,6 @@ def lambda_handler(event, context):
             if v is None:
                 return {'statusCode': 400, 
                 'body': '400: There are null values in crs/properties'}
-                raise Exception("ValueError: Nan value in crs")
 
         # Checking all properties are not Nan for features, too
 
@@ -51,7 +48,6 @@ def lambda_handler(event, context):
                 if v is None:
                     return {'statusCode': 400, 
                     'body': '400: There are null values in features/properties'}
-                    raise Exception("ValueError: Nan value in features")
 
 
 # Checks if each date column is present, fails if they aren't, then enforces YYYY-MM-DD
@@ -61,9 +57,7 @@ def lambda_handler(event, context):
                 if date_val is False:
                     return {'statusCode': 400, 
                             'body': '400: pdate in wrong format. Provide YYYY-MM-DD'}
-                    raise Exception(
-                        "ValueError: Date Value not formatted correctly (YYYY-MM-DD)"
-                        )        
+
         else:
             return {'statusCode': 400, 
         'body': '400: pdate is required in feature properties'}
@@ -73,11 +67,11 @@ def lambda_handler(event, context):
                 date_val = bool(datetime.strptime(i['properties']['gsstart'], format))
                 if date_val is False:
                     return {'statusCode': 400, 
-                            'body': '400: gsstart in wrong format. Provide YYYY-MM-DD'}         
+                            'body': '400: gsstart in wrong format. Provide YYYY-MM-DD'}  
+
         else:
             return {'statusCode': 400, 
                 'body': '400: gsstart is required in feature properties'}
-            raise Exception('AttributeError: gsstart field is required in feature properties')
 
 
         if 'gsend' in i['properties']:
@@ -88,14 +82,13 @@ def lambda_handler(event, context):
         else:
             return {'statusCode': 400, 
                 'body': '400: gsend is required in feature properties'}
-            raise Exception('AttributeError: gsend is required in field properties')
 
     try:
         s3.put_object(Body=geojson.dumps(data), Bucket='presia-poc-2024-11-24', Key=f'{file_name}.geojson')
     except:
         return {'statusCode': 500,
         'body': f"Data Failed to send to S3 Bucket. Check API token parameters."
-    }
+    }    
 
     return {
         'statusCode': 200,
